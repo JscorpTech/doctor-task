@@ -15,9 +15,9 @@ func NewDoctorUsecase(doctorRepository repository.DoctorRepository) domain.Docto
 	}
 }
 
-func (d *DoctorUsecase) List() ([]*domain.DoctorResponse, error) {
+func (d *DoctorUsecase) List() []*domain.DoctorResponse {
 	var doctorsDTO []*domain.DoctorResponse
-	doctors, err := d.DoctorRepository.List()
+	doctors, _ := d.DoctorRepository.List()
 	for _, e := range doctors {
 		doctorsDTO = append(doctorsDTO, &domain.DoctorResponse{
 			FirstName: e.FirstName,
@@ -28,8 +28,5 @@ func (d *DoctorUsecase) List() ([]*domain.DoctorResponse, error) {
 			WorkEnd:   e.WorkEnd.Format("15:04"),
 		})
 	}
-	if err != nil {
-		return nil, err
-	}
-	return doctorsDTO, nil
+	return doctorsDTO
 }

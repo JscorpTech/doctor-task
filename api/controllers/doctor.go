@@ -23,6 +23,5 @@ func NewDoctorController(app *bootstrap.App) *DoctorController {
 }
 
 func (d *DoctorController) List(c echo.Context) error {
-	doctors, _ := d.DoctorUsecase.List()
-	return c.JSON(http.StatusOK, doctors)
+	return c.JSON(http.StatusOK, d.DoctorUsecase.List())
 }

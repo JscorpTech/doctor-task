@@ -10,5 +10,5 @@ type DoctorResponse struct {
 }
 
 type DoctorUsecase interface {
-	List() ([]*DoctorResponse, error)
+	List() []*DoctorResponse
 }
