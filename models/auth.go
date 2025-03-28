@@ -8,6 +8,7 @@ type User struct {
 	LastName  string  `gorm:"type:varchar(255)"`
 	Phone     string  `gorm:"type:varchar(255)"`
 	Password  string  `gorm:"type:varchar(255)"`
+	Role      string  `gorm:"type:varchar(50);not null"`
 	Tokens    []Token `gorm:"constraint:OnDelete:CASCADE"`
 }
 
