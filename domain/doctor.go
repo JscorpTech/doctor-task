@@ -1,7 +1,5 @@
 package domain
 
-import "github.com/JscorpTech/jst-go/models"
-
 type DoctorResponse struct {
 	FirstName string `json:"first_name"`
 	LastName  string `json:"last_name"`
@@ -12,5 +10,5 @@ type DoctorResponse struct {
 }
 
 type DoctorUsecase interface {
-	List() ([]*models.Doctor, error)
+	List() ([]*DoctorResponse, error)
 }

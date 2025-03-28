@@ -23,18 +23,6 @@ func NewDoctorController(app *bootstrap.App) *DoctorController {
 }
 
 func (d *DoctorController) List(c echo.Context) error {
-	var doctorsDTO []domain.DoctorResponse
 	doctors, _ := d.DoctorUsecase.List()
-
-	for _, e := range doctors {
-		doctorsDTO = append(doctorsDTO, domain.DoctorResponse{
-			FirstName: e.FirstName,
-			LastName:  e.LastName,
-			Phone:     e.Phone,
-			Specialty: e.Specialty,
-			WorkStart: e.WorkStart.Format("15:04"),
-			WorkEnd:   e.WorkEnd.Format("15:04"),
-		})
-	}
-	return c.JSON(http.StatusOK, doctorsDTO)
+	return c.JSON(http.StatusOK, doctors)
 }

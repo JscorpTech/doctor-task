@@ -2,7 +2,6 @@ package usecase
 
 import (
 	"github.com/JscorpTech/jst-go/domain"
-	"github.com/JscorpTech/jst-go/models"
 	"github.com/JscorpTech/jst-go/repository"
 )
 
@@ -16,10 +15,21 @@ func NewDoctorUsecase(doctorRepository repository.DoctorRepository) domain.Docto
 	}
 }
 
-func (d *DoctorUsecase) List() ([]*models.Doctor, error) {
+func (d *DoctorUsecase) List() ([]*domain.DoctorResponse, error) {
+	var doctorsDTO []*domain.DoctorResponse
 	doctors, err := d.DoctorRepository.List()
+	for _, e := range doctors {
+		doctorsDTO = append(doctorsDTO, &domain.DoctorResponse{
+			FirstName: e.FirstName,
+			LastName:  e.LastName,
+			Phone:     e.Phone,
+			Specialty: e.Specialty,
+			WorkStart: e.WorkStart.Format("15:04"),
+			WorkEnd:   e.WorkEnd.Format("15:04"),
+		})
+	}
 	if err != nil {
 		return nil, err
 	}
-	return doctors, nil
+	return doctorsDTO, nil
 }
