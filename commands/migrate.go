@@ -1,4 +1,4 @@
-package main
+package commands
 
 import (
 	"fmt"
@@ -6,6 +6,7 @@ import (
 
 	"github.com/JscorpTech/jst-go/bootstrap"
 	"github.com/JscorpTech/jst-go/models"
+	"github.com/spf13/cobra"
 	"gorm.io/gorm"
 )
 
@@ -51,9 +52,14 @@ func migrateTablesIndividually(db *gorm.DB, models []interface{}) {
 	}
 }
 
-func main() {
-	app := bootstrap.NewApp()
-	defer bootstrap.CloseDatabaseConnection(app)
+func Migrate() *cobra.Command {
+	return &cobra.Command{
+		Use: "migrate",
+		Run: func(cmd *cobra.Command, args []string) {
+			app := bootstrap.NewApp()
+			defer bootstrap.CloseDatabaseConnection(app)
 
-	migrateTablesIndividually(app.DB, modelsToMigrate)
+			migrateTablesIndividually(app.DB, modelsToMigrate)
+		},
+	}
 }

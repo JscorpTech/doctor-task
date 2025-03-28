@@ -1,15 +1,20 @@
 package main
 
 import (
-	"fmt"
+	"log"
 
-	"github.com/JscorpTech/jst-go/api/routes"
-	"github.com/JscorpTech/jst-go/bootstrap"
+	"github.com/JscorpTech/jst-go/commands"
+	"github.com/spf13/cobra"
 )
 
 func main() {
-	app := bootstrap.NewApp()
-	defer bootstrap.CloseApp(app)
-	routes.InitRoutes(app)
-	app.Server.Logger.Fatal(app.Server.Start(fmt.Sprintf(":%s", app.Env.Port)))
+	rootCmd := &cobra.Command{
+		Use: "manage",
+	}
+	rootCmd.AddCommand(commands.RunServer())
+	rootCmd.AddCommand(commands.Migrate())
+	rootCmd.AddCommand(commands.Doctor())
+	if err := rootCmd.Execute(); err != nil {
+		log.Fatal(err)
+	}
 }
