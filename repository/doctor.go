@@ -1,6 +1,8 @@
 package repository
 
 import (
+	"fmt"
+
 	"github.com/JscorpTech/jst-go/models"
 	"gorm.io/gorm"
 )
@@ -15,10 +17,22 @@ func NewDoctorRepository(db *gorm.DB) *DoctorRepository {
 	}
 }
 
-func (d *DoctorRepository) List() ([]*models.Doctor, error) {
+func (d *DoctorRepository) List(search string) ([]*models.Doctor, error) {
 	var doctors []*models.Doctor
-	if err := d.DB.Find(&doctors).Error; err != nil {
+	search = fmt.Sprintf("%%%s%%", search)
+
+	if err := d.DB.Where("first_name LIKE ? OR last_name LIKE ? OR phone LIKE ?",
+		search, search, search).
+		Find(&doctors).Error; err != nil {
 		return nil, err
 	}
 	return doctors, nil
+}
+
+func (d *DoctorRepository) FindByID(id uint) (*models.Doctor, error) {
+	var doctor models.Doctor
+	if err := d.DB.Preload("Appointments").First(&doctor, "id = ?", id).Error; err != nil {
+		return nil, err
+	}
+	return &doctor, nil
 }

@@ -8,12 +8,13 @@ import (
 
 type Doctor struct {
 	gorm.Model
-	FirstName string    `gorm:"not null"`
-	LastName  string    `gorm:"not null"`
-	Phone     string    `gorm:"unique"`
-	Specialty string    `gorm:"not null"`
-	WorkStart time.Time `gorm:"not null;type:time"`
-	WorkEnd   time.Time `gorm:"not null;type:time"`
+	FirstName    string    `gorm:"not null"`
+	LastName     string    `gorm:"not null"`
+	Phone        string    `gorm:"unique"`
+	Specialty    string    `gorm:"not null"`
+	WorkStart    time.Time `gorm:"not null;type:time"`
+	WorkEnd      time.Time `gorm:"not null;type:time"`
+	Appointments []Appointment
 }
 
 func (d *Doctor) TableName() string {

@@ -2,6 +2,7 @@ package controllers
 
 import (
 	"net/http"
+	"strconv"
 
 	"github.com/JscorpTech/jst-go/bootstrap"
 	"github.com/JscorpTech/jst-go/domain"
@@ -23,5 +24,15 @@ func NewDoctorController(app *bootstrap.App) *DoctorController {
 }
 
 func (d *DoctorController) List(c echo.Context) error {
-	return c.JSON(http.StatusOK, d.DoctorUsecase.List())
+	return c.JSON(http.StatusOK, domain.SuccessResponse("OK", d.DoctorUsecase.List(c.QueryParam("search"))))
+}
+
+func (d *DoctorController) Retrieve(c echo.Context) error {
+	idString := c.Param("id")
+	id, _ := strconv.ParseUint(idString, 10, 32)
+	doctor, err := d.DoctorUsecase.FindByID(uint(id))
+	if err != nil {
+		return c.JSON(http.StatusNotFound, domain.ErrorResponse("Doctor Not found", nil))
+	}
+	return c.JSON(http.StatusOK, domain.SuccessResponse("OK", doctor))
 }

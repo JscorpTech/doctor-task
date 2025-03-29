@@ -10,7 +10,7 @@ type Appointment struct {
 	gorm.Model
 	DoctorID uint      `gorm:"not null"`
 	UserID   uint      `gorm:"not null"`
-	Time     time.Time `gorm:"unique;not null"`
+	Time     time.Time `gorm:"not null"`
 	Status   string    `gorm:"default:'scheduled'"` // "scheduled", "cancelled"
 	User     User
 	Doctor   Doctor

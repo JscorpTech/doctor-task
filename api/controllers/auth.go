@@ -1,6 +1,8 @@
 package controllers
 
 import (
+	"net/http"
+
 	"github.com/JscorpTech/jst-go/bootstrap"
 	"github.com/JscorpTech/jst-go/domain"
 	"github.com/JscorpTech/jst-go/models"
@@ -9,21 +11,20 @@ import (
 	"github.com/JscorpTech/jst-go/repository"
 	"github.com/JscorpTech/jst-go/usecase"
 	"github.com/labstack/echo/v4"
-	"net/http"
 )
 
 type AuthController struct {
-	App             *bootstrap.App
-	LoginUsecase    domain.LoginUsecase
-	RegisterUsecase domain.RegisterUsecase
+	App        *bootstrap.App
+	LoginUC    domain.LoginUsecase
+	RegisterUC domain.RegisterUsecase
 }
 
 func NewAuthController(app *bootstrap.App) *AuthController {
 	userRepository := repository.NewUserRepository(app.DB)
 	return &AuthController{
-		App:             app,
-		LoginUsecase:    usecase.NewLoginUsecase(userRepository),
-		RegisterUsecase: usecase.NewRegisterUsecase(userRepository),
+		App:        app,
+		LoginUC:    usecase.NewLoginUsecase(userRepository),
+		RegisterUC: usecase.NewRegisterUsecase(userRepository),
 	}
 }
 
@@ -38,15 +39,15 @@ func (auth *AuthController) Login(c echo.Context) error {
 		return c.JSON(http.StatusBadRequest, domain.ErrorResponse(messages.ValidationError, err))
 	}
 
-	user, err := auth.LoginUsecase.Login(payload.Phone, payload.Password)
+	user, err := auth.LoginUC.Login(payload.Phone, payload.Password)
 	if err != nil {
 		return c.JSON(http.StatusForbidden, domain.ErrorResponse(messages.PermissionDenied, nil))
 	}
-	token, err := auth.LoginUsecase.GetToken(user)
+	token, err := auth.LoginUC.GetToken(user)
 	if err != nil {
 		return c.JSON(http.StatusForbidden, domain.ErrorResponse(messages.PermissionDenied, nil))
 	}
-	return c.JSON(http.StatusOK, token)
+	return c.JSON(http.StatusOK, domain.SuccessResponse("OK", token))
 }
 
 func (auth *AuthController) Logout(c echo.Context) error {
@@ -64,7 +65,7 @@ func (auth *AuthController) Register(c echo.Context) error {
 		return c.JSON(http.StatusBadRequest, domain.ErrorResponse(messages.ValidationError, err))
 	}
 
-	user, err := auth.RegisterUsecase.CreateUserIfNotExist(payload.Phone, payload.FirstName, payload.LastName, payload.Password)
+	user, err := auth.RegisterUC.CreateUserIfNotExist(payload.Phone, payload.FirstName, payload.LastName, payload.Password)
 	if err != nil {
 		return c.JSON(http.StatusBadRequest, domain.ErrorResponse(messages.InternalError, domain.ValidationError{
 			Field:   "phone",
@@ -73,7 +74,7 @@ func (auth *AuthController) Register(c echo.Context) error {
 		}))
 	}
 
-	token, err := auth.LoginUsecase.GetToken(user)
+	token, err := auth.LoginUC.GetToken(user)
 	if err != nil {
 		return c.JSON(http.StatusInternalServerError, domain.ErrorResponse(messages.InternalError, err))
 	}
